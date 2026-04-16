@@ -1,0 +1,31 @@
+# docker-compose override for Hazel (Unraid) deployment.
+#
+# This file sits next to upstream's docker-compose.yml and is auto-merged
+# by `docker compose up`. Only includes Hazel-specific changes:
+#   - bind-mount Postgres data and audio blobs into /mnt/user/appdata/openplaud/
+#     instead of using Docker named volumes (so Unraid's appdata backup picks
+#     them up, and so we can browse the files via SMB if needed)
+#   - read env from the .env file alongside this override
+#   - close the Postgres port (only the app container needs to reach it,
+#     and Unraid's LAN isn't a place to expose 5432)
+
+version: '3.8'
+
+services:
+  db:
+    volumes:
+      - /mnt/user/appdata/openplaud/postgres:/var/lib/postgresql/data
+    ports: !reset []   # close 5432 to the LAN; only the app container connects via the docker network
+
+  app:
+    env_file:
+      - .env
+    volumes:
+      - /mnt/user/appdata/openplaud/audio:/app/audio
+    # Phase 1: keep port 3000 exposed on Hazel's LAN IP. No reverse proxy yet.
+
+# Override the named volumes so Unraid sees nothing dangling. Empty maps
+# are fine here — the bind mounts above take precedence.
+volumes:
+  pgdata:
+  audio:
