@@ -1,7 +1,7 @@
-# docker-compose override for Hazel (Unraid) deployment.
+# docker-compose override for Unraid (Unraid) deployment.
 #
 # This file sits next to upstream's docker-compose.yml and is auto-merged
-# by `docker compose up`. Only includes Hazel-specific changes:
+# by `docker compose up`. Only includes Unraid-specific changes:
 #   - bind-mount Postgres data and audio blobs into /mnt/user/appdata/openplaud/
 #     instead of using Docker named volumes (so Unraid's appdata backup picks
 #     them up, and so we can browse the files via SMB if needed)
@@ -22,7 +22,7 @@ services:
       - .env
     volumes:
       - /mnt/user/appdata/openplaud/audio:/app/audio
-    # Phase 1: keep port 3000 exposed on Hazel's LAN IP. No reverse proxy yet.
+    # Phase 1: keep port 3000 exposed on Unraid's LAN IP. No reverse proxy yet.
 
 # Override the named volumes so Unraid sees nothing dangling. Empty maps
 # are fine here — the bind mounts above take precedence.
