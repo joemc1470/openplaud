@@ -22,7 +22,10 @@ services:
       - .env
     volumes:
       - /mnt/user/appdata/openplaud/audio:/app/audio
-    # Phase 1: keep port 3000 exposed on Unraid's LAN IP. No reverse proxy yet.
+    # Unraid already binds :3000 (Mealie) so we remap via !override.
+    # Change 3030 here (and APP_URL in .env) to match your actual free port.
+    ports: !override
+      - "3030:3000"
 
 # Override the named volumes so Unraid sees nothing dangling. Empty maps
 # are fine here — the bind mounts above take precedence.

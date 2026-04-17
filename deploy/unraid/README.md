@@ -25,9 +25,10 @@ explicit bind mounts.
 
 ## Network exposure
 
-Phase 1: LAN only. App listens on `:3000` on the Unraid LAN IP. Reach it at
-`http://tower.local:3000` or `http://192.168.68.121:3000` from any device on
-the LAN.
+Phase 1: LAN only. Host port **3030** (remapped — `:3000` is already Mealie on
+this Unraid). App inside the container still listens on `:3000`; the override
+exposes it as `3030:3000`. Reach it at `http://tower.local:3030` or
+`http://192.168.68.121:3030` from any device on the LAN.
 
 Phase 1+ (later): if Joe wants TLS, add a reverse-proxy entry in his
 existing Caddy / Nginx-Proxy-Manager stack. Out of scope for Phase 1.
@@ -71,7 +72,7 @@ ls deploy/unraid
 # 5. Copy the env template and fill in the two secrets
 cp deploy/unraid/.env.template .env
 # edit BETTER_AUTH_SECRET and ENCRYPTION_KEY in .env
-# (APP_URL defaults to http://tower.local:3000 — change only if the port is taken)
+# (APP_URL defaults to http://tower.local:3030 — change only if the port is taken)
 
 # 6. Copy the override compose next to upstream's docker-compose.yml
 cp deploy/unraid/docker-compose.override.yml docker-compose.override.yml
@@ -84,13 +85,13 @@ docker compose ps
 # both openplaud-db and openplaud-app should show 'healthy'
 
 # 9. Verify HTTP from the LAN
-curl -sS http://192.168.68.121:3000/api/health
+curl -sS http://192.168.68.121:3030/api/health
 # expect: JSON with status:"ok"
 ```
 
 ## First-run onboarding (Joe does this in a browser)
 
-Open `http://tower.local:3000` (or `http://192.168.68.121:3000`) and walk
+Open `http://tower.local:3030` (or `http://192.168.68.121:3030`) and walk
 through:
 
 1. **Create account** — this account becomes the admin.
@@ -116,7 +117,7 @@ Then click **Sync** manually to confirm Plaud auth works.
 
 ```bash
 # Recording count via API (run from any LAN host)
-curl -sS http://192.168.68.121:3000/api/recordings | head -c 400
+curl -sS http://192.168.68.121:3030/api/recordings | head -c 400
 
 # Audio landing on disk
 ssh chloe "ls -la /mnt/user/appdata/openplaud/audio | head"
