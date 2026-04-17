@@ -1,4 +1,5 @@
 import { and, eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { OpenAI } from "openai";
 import { db } from "@/db";
@@ -14,7 +15,7 @@ import {
     getSummaryPromptById,
     type SummaryPromptConfiguration,
 } from "@/lib/ai/summary-presets";
-import { auth } from "@/lib/auth";
+
 import { decrypt } from "@/lib/encryption";
 
 // POST - Generate summary
@@ -23,9 +24,7 @@ export async function POST(
     { params }: { params: Promise<{ id: string }> },
 ) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(
@@ -277,9 +276,7 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> },
 ) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(
@@ -328,9 +325,7 @@ export async function DELETE(
     { params }: { params: Promise<{ id: string }> },
 ) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

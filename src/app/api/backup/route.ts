@@ -1,15 +1,13 @@
 import { eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { recordings, transcriptions } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 // POST - Create a backup of all user data
 export async function POST(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

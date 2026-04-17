@@ -1,16 +1,15 @@
 import { and, eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { apiCredentials } from "@/db/schema";
-import { auth } from "@/lib/auth";
+
 import { encrypt } from "@/lib/encryption";
 
 // GET - List all AI providers for the user
 export async function GET(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(
@@ -45,9 +44,7 @@ export async function GET(request: Request) {
 // POST - Add new AI provider
 export async function POST(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

@@ -1,4 +1,5 @@
 import { execFile } from "node:child_process";
+import { getSession } from "@/lib/auth-server";
 import { createHash } from "node:crypto";
 import * as fs from "node:fs/promises";
 import * as os from "node:os";
@@ -8,7 +9,7 @@ import { nanoid } from "nanoid";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { recordings } from "@/db/schema";
-import { auth } from "@/lib/auth";
+
 import { env } from "@/lib/env";
 import { createUserStorageProvider } from "@/lib/storage/factory";
 import { getAudioMimeType } from "@/lib/utils";
@@ -55,9 +56,7 @@ async function getAudioDurationMs(filePath: string): Promise<number> {
 }
 
 export async function POST(request: Request) {
-    const session = await auth.api.getSession({
-        headers: request.headers,
-    });
+    const session = await getSession();
 
     if (!session?.user) {
         return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

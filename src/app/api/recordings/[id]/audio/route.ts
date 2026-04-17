@@ -1,8 +1,9 @@
 import { and, eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { recordings } from "@/db/schema";
-import { auth } from "@/lib/auth";
+
 import { createUserStorageProvider } from "@/lib/storage/factory";
 
 export async function GET(
@@ -10,9 +11,7 @@ export async function GET(
     { params }: { params: Promise<{ id: string }> },
 ) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

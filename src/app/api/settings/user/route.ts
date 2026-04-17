@@ -1,8 +1,8 @@
 import { eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { userSettings } from "@/db/schema";
-import { auth } from "@/lib/auth";
 
 // Default settings values
 const DEFAULT_SETTINGS = {
@@ -85,9 +85,7 @@ function extractSettings(settings: typeof userSettings.$inferSelect) {
 // GET - Fetch user settings
 export async function GET(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(
@@ -141,9 +139,7 @@ export async function GET(request: Request) {
 // PUT - Update user settings
 export async function PUT(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

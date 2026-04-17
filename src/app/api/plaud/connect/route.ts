@@ -1,17 +1,16 @@
 import { and, eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { plaudConnections, plaudDevices } from "@/db/schema";
-import { auth } from "@/lib/auth";
+
 import { encrypt } from "@/lib/encryption";
 import { PlaudClient } from "@/lib/plaud/client";
 import { DEFAULT_SERVER_KEY, resolveApiBase } from "@/lib/plaud/servers";
 
 export async function POST(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(

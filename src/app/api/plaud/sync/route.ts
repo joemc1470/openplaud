@@ -1,13 +1,12 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+
+import { getSession } from "@/lib/auth-server";
 import { AppError, createErrorResponse, ErrorCode } from "@/lib/errors";
 import { syncRecordingsForUser } from "@/lib/sync/sync-recordings";
 
 export async function POST(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             const error = new AppError(

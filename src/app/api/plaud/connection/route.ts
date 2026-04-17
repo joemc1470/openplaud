@@ -1,15 +1,14 @@
 import { eq } from "drizzle-orm";
+import { getSession } from "@/lib/auth-server";
 import { NextResponse } from "next/server";
 import { db } from "@/db";
 import { plaudConnections } from "@/db/schema";
-import { auth } from "@/lib/auth";
+
 import { serverKeyFromApiBase } from "@/lib/plaud/servers";
 
 export async function GET(request: Request) {
     try {
-        const session = await auth.api.getSession({
-            headers: request.headers,
-        });
+        const session = await getSession();
 
         if (!session?.user) {
             return NextResponse.json(
