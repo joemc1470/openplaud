@@ -67,6 +67,37 @@ export const verifications = pgTable("verifications", {
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+// Better Auth apiKey() plugin table — programmatic access to the API
+// via `Authorization: Bearer <key>` headers. Lets the AgentOS skill
+// poll /api/recordings without a session cookie.
+export const apikeys = pgTable("apikeys", {
+    id: text("id")
+        .primaryKey()
+        .$defaultFn(() => nanoid()),
+    name: text("name"),
+    start: text("start"),
+    prefix: text("prefix"),
+    key: text("key").notNull(),
+    userId: text("user_id")
+        .notNull()
+        .references(() => users.id, { onDelete: "cascade" }),
+    refillInterval: integer("refill_interval"),
+    refillAmount: integer("refill_amount"),
+    lastRefillAt: timestamp("last_refill_at"),
+    enabled: boolean("enabled").default(true),
+    rateLimitEnabled: boolean("rate_limit_enabled").default(true),
+    rateLimitTimeWindow: integer("rate_limit_time_window"),
+    rateLimitMax: integer("rate_limit_max"),
+    requestCount: integer("request_count").default(0),
+    remaining: integer("remaining"),
+    lastRequest: timestamp("last_request"),
+    expiresAt: timestamp("expires_at"),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    permissions: text("permissions"),
+    metadata: text("metadata"),
+});
+
 // Plaud connection
 export const plaudConnections = pgTable("plaud_connections", {
     id: text("id")
